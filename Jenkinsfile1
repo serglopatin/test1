@@ -14,7 +14,7 @@ pipeline {
                 script {
                     def scmVars1 = checkout([
                         $class: 'GitSCM',
-                        branches: [[name: 'test1/develop']],
+                        branches: [[name: 'refs/remotes/test1/develop']],
                         doGenerateSubmoduleConfigurations: false,
                         extensions: [],
                         submoduleCfg: [],
@@ -28,7 +28,7 @@ pipeline {
 
                     def scmVars2 = checkout([
                         $class: 'GitSCM',
-                        branches: [[name: 'test2/develop']],
+                        branches: [[name: 'refs/remotes/test2/develop']],
                         doGenerateSubmoduleConfigurations: false,
                         extensions: [],
                         submoduleCfg: [],
