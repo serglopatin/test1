@@ -14,28 +14,26 @@ pipeline {
                 script {
                     def scmVars1 = checkout([
                         $class: 'GitSCM',
-                        branches: [[name: 'refs/remotes/test1/develop']],
+                        branches: [[name: '*/develop']],
                         doGenerateSubmoduleConfigurations: false,
-                        extensions: [],
                         submoduleCfg: [],
                         userRemoteConfigs: [[credentialsId: 'c4a270e5-ce9c-491b-9746-e0bbe8d7ce61',
                         url: 'git@github.com:serglopatin/test1.git']],
 			name: 'test1',
-			refspec: 'refs/remotes/test1/develop'
+			extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'test1']]
                         ])
                     env.API_GIT_COMMIT = scmVars1.GIT_COMMIT
                     env.API_GIT_BRANCH = scmVars1.GIT_BRANCH
 
                     def scmVars2 = checkout([
                         $class: 'GitSCM',
-                        branches: [[name: 'refs/remotes/test2/develop']],
+                        branches: [[name: '*/develop']],
                         doGenerateSubmoduleConfigurations: false,
-                        extensions: [],
                         submoduleCfg: [],
                         userRemoteConfigs: [[credentialsId: 'c4a270e5-ce9c-491b-9746-e0bbe8d7ce61',
                         url: 'git@github.com:serglopatin/test2.git']],
                         name: 'test2',
-			refspec: 'refs/remotes/test2/develop'
+			extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'test2']]
                         ])
 
                     env.FRONTEND_GIT_COMMIT = scmVars2.GIT_COMMIT
