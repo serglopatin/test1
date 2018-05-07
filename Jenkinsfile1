@@ -1,0 +1,75 @@
+pipeline {
+
+    agent none
+
+    triggers { pollSCM('*/15 * * * *') }
+
+    stages {
+
+        stage('Checkout master') {
+
+            agent {label 'master'}
+
+            steps {
+                script {
+                    def scmVars1 = checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '*/develop']],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[credentialsId: 'c4a270e5-ce9c-491b-9746-e0bbe8d7ce61',
+                        url: 'git@github.com:serglopatin/test1.git']]
+                        ])
+                    env.API_GIT_COMMIT = scmVars1.GIT_COMMIT
+                    env.API_GIT_BRANCH = scmVars1.GIT_BRANCH
+
+                    def scmVars2 = checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '*/develop']],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[credentialsId: 'c4a270e5-ce9c-491b-9746-e0bbe8d7ce61',
+                        url: 'git@github.com:serglopatin/test2.git']],
+                        name: 'test2'
+                        ])
+
+                    env.FRONTEND_GIT_COMMIT = scmVars2.GIT_COMMIT
+                    env.FRONTEND_GIT_BRANCH = scmVars2.GIT_BRANCH
+
+                    echo 'env master: '
+                    sh 'printenv'
+                }
+            }
+        }
+
+        stage('Slave Workload') {
+
+            agent { label 'jenkins-slave-ec2' }
+
+            steps {
+                script {
+                    // here we use substages in order to run them all on the same node
+
+                    stage('Checkout') {
+                        echo 'Update devops..'
+
+                        sh '''
+cd /opt/devops_www/devops
+git checkout master
+git pull
+cd
+/opt/devops_www/devops/venv/bin/pip install -r /opt/devops_www/devops/requirements.txt
+
+echo "env slave:"
+printenv
+
+'''
+                    }
+                }
+            }
+        }
+    }
+}
+
