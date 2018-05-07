@@ -19,7 +19,8 @@ pipeline {
                         extensions: [],
                         submoduleCfg: [],
                         userRemoteConfigs: [[credentialsId: 'c4a270e5-ce9c-491b-9746-e0bbe8d7ce61',
-                        url: 'git@github.com:serglopatin/test1.git']]
+                        url: 'git@github.com:serglopatin/test1.git']],
+			name: 'test1'
                         ])
                     env.API_GIT_COMMIT = scmVars1.GIT_COMMIT
                     env.API_GIT_BRANCH = scmVars1.GIT_BRANCH
